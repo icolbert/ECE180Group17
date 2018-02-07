@@ -1,1 +1,3 @@
-# ECE180Group17
+# Project Data
+
+The raw data files are stored here
