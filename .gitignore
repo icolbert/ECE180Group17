@@ -1,0 +1,6 @@
+# We can archive local version of our code without having to push to the origin
+**/Archive/
+**/archive/
+
+# The csv files are too big to push to origin on Github
+*.csv
