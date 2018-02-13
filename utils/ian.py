@@ -30,9 +30,9 @@ class InputData:
 		except Exception as e:
 			print e
 
-		N = self.data.sum()
-		bad_columns = list(set(N[N == 0].index).union(set(data) - set(N.index)))
-		self.data = self.data.drop(bad_columns, axis=1)
+		#N = self.data.sum()
+		#bad_columns = list(set(N[N == 0].index).union(set(data) - set(N.index)))
+		#self.data = self.data.drop(bad_columns, axis=1)
 
 	def find_rows(self, filter_dict={'geoname':'California'}):
 		'''
