@@ -109,7 +109,7 @@ class BuildModel:
 if __name__ == '__main__':
 
 	'''
-	Last update: 2/12/2018 -ic 
+	Last update: 2/13/2018 -ic 
 
 	Testing the functions and classes in this file
 	'''
