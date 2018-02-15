@@ -89,22 +89,33 @@ class BuildModel:
 		assert isinstance(data, type(pd.DataFrame())), "x needs to be a pandas DataFrame, it is a {0}".format(type(x))
 
 		self.data = data
-		self.LinReg()
 
-	def LinReg(self):
-		y = self.data['injuries'].values
-		x = self.data['reportyear'].values
+	def LinReg(self, title, xdim='reportyear', ydim='injuries', sweep=None):
+		assert xdim in list(self.data), "xdim needs to be one of the columns in data"
+		assert ydim in list(self.data), "ydim needs to be one of the columns in data"
+		assert isinstance(title, str), "title needs to be of type str, not {0}".format(type(title))
 
-		regr = linear_model.LinearRegression()
-		regr.fit(x.reshape(len(x), 1), y.reshape(len(y), 1))
+		if not os.path.exists('results/'):
+			os.makedirs('results/')
+		
+		self.y = self.data[ydim].values
+		self.x = self.data[xdim].values
+		self.regr = linear_model.LinearRegression()
+		self.regr.fit(self.x.reshape(len(self.x), 1), self.y.reshape(len(self.y), 1))
 
-		plt.scatter(x, y, color='black')
-		plt.plot(x, regr.predict(x.reshape(len(x), 1)), color='blue', linewidth=3)
+		plt.clf()
+		plt.scatter(self.x, self.y, color='black')
+		plt.plot(self.x, self.regr.predict(self.x.reshape(len(self.x), 1)), linewidth=3, label=title)
 		plt.xticks()
 		plt.yticks()
 		plt.ylabel('injuries')
 		plt.xlabel('year')
-		plt.show()
+		plt.legend()
+		try:
+			plt.savefig('results/LinReg-{0}.png'.format(title))
+		except Exception as e:
+			plt.savefig('results/LinReg-{0}.png'.format('Car'))
+
 
 if __name__ == '__main__':
 
@@ -123,16 +134,24 @@ if __name__ == '__main__':
 	filter_dict = {
 	'geoname': 'California',
 	'severity': 'Killed',
-	'mode':'All modes',
+	'mode': None,
 	'reportyear': range(2002,2011)
 	}
 
 	xdata = InputData()
 	xdata.load_data('data/road-traffic-injuries-2002-2010.csv')
-	xs = xdata.find_rows(filter_dict)
-	xs = xdata.filter_data(xs)
 
-	xs.to_csv('sample.csv')
-	model = BuildModel(xs)
+	# Bus, All modes, Bicyclist
+	xs = {}
+	for m in ['All modes', 'Bus', 'Bicyclist', 'Car/Pickup', 'Motorcycle', 'Truck', 'Pedestrian', 'Vehicles']:
+		filter_dict['mode'] = m
+		xs.update({m: xdata.filter_data(xdata.find_rows(filter_dict))})
+		print('\n')
+
+	for key, data in xs.items():
+		a = BuildModel(data)
+		a.LinReg(key)
+
+	
 	
 
