@@ -22,9 +22,9 @@ class InputData:
 		read_columns (type: list) - you can specify which columns you would like to read
 		'''
 		assert isinstance(fname, str), "fname is not a string: {0}".format(type(fname))
-		assert  (fname in [i for i in glob.glob('data/*.csv')]), "fname is not in data/"
+		#assert  (fname in [i for i in glob.glob('data\*.csv')]), "fname is not in data/"
 
-		print 'Reading in {0}...'.format(fname) 
+		print('Reading in {0}...'.format(fname))
 		self.data = pd.read_csv(fname)
 		try:
 			if read_columns:
@@ -32,7 +32,7 @@ class InputData:
 			else:
 				self.data = self.data.filter(items=self.read_columns, axis=1)
 		except Exception as e:
-			print e
+			print(e)
 
 	def filter_data(self, x=None):
 		if x.empty:
@@ -42,7 +42,7 @@ class InputData:
 		else:
 			assert isinstance(x, type(pd.DataFrame())), "x needs to be a pandas DataFrame, it is a {0}".format(type(x))
 
-			print 'Filtering bad features from data...'
+			print('Filtering bad features from data...')
 			N = x.sum()
 			bad_columns = list(set(N[N == 0].index).union(set(set(list(x)) - set(N.index))))
 			x = x.drop(bad_columns, axis=1)
@@ -60,20 +60,20 @@ class InputData:
 		
 		x = self.data
 		for key, value in filter_dict.items():
-			print 'Filtering {0}...'.format(key)
+			print('Filtering {0}...'.format(key))
 			if isinstance(value, list):
 				y = pd.DataFrame(data=[])
 				for v in value:
 					try:
 						y = pd.concat([x[x[key] == str(v)], y], ignore_index=True)
 					except Exception as e:
-						print e
+						print(e)
 				x = y
 			else:
 				try:
 					x = x[x[key] == value]
 				except Exception as e:
-					print e
+					print(e)
 
 		return x
 
@@ -87,7 +87,6 @@ class BuildModel:
 		:model: string - type of regression model to use
 		'''
 		assert isinstance(data, type(pd.DataFrame())), "x needs to be a pandas DataFrame, it is a {0}".format(type(x))
-
 		self.data = data
 
 	def LinReg(self, title, xdim='reportyear', ydim='injuries', sweep=None):
@@ -128,7 +127,7 @@ if __name__ == '__main__':
 	filter_items = [
 		'geoname', 'reportyear', 
 		'mode', 'severity', 'injuries', 'totalpop',
-		'poprate', 'avmttotal'
+		'poprate', 'avmttotal', 'county_name'
 		]
 
 	filter_dict = {
@@ -146,6 +145,10 @@ if __name__ == '__main__':
 	for m in ['All modes', 'Bus', 'Bicyclist', 'Car/Pickup', 'Motorcycle', 'Truck', 'Pedestrian', 'Vehicles']:
 		filter_dict['mode'] = m
 		xs.update({m: xdata.filter_data(xdata.find_rows(filter_dict))})
+		try:
+			xdata.filter_data(xdata.find_rows(filter_dict)).to_csv('{0}.csv'.format(m))
+		except:
+			xdata.filter_data(xdata.find_rows(filter_dict)).to_csv('Car.csv'.format(m))	
 		print('\n')
 
 	for key, data in xs.items():
