@@ -81,24 +81,30 @@ class BuildModel:
 	'''
 	Build a model based on the 
 	'''
-	def __init__(self, data):
+	def __init__(self, data, xdim='reportyear', ydim='injuries'):
 		'''
 		:data: DataFrame - all of the data
 		:model: string - type of regression model to use
 		'''
 		assert isinstance(data, type(pd.DataFrame())), "x needs to be a pandas DataFrame, it is a {0}".format(type(x))
-		self.data = data
+		assert xdim in list(data), "xdim needs to be one of the columns in data"
+		assert ydim in list(data), "ydim needs to be one of the columns in data"
 
-	def LinReg(self, title, xdim='reportyear', ydim='injuries', sweep=None):
-		assert xdim in list(self.data), "xdim needs to be one of the columns in data"
-		assert ydim in list(self.data), "ydim needs to be one of the columns in data"
-		assert isinstance(title, str), "title needs to be of type str, not {0}".format(type(title))
+		self.data = data.dropna(axis=0, how='any')
+		self.y = self.data[ydim].values
+		self.x = self.data[xdim].values.astype('int64')
+
 
 		if not os.path.exists('results/'):
 			os.makedirs('results/')
-		
-		self.y = self.data[ydim].values
-		self.x = self.data[xdim].values
+
+
+	def LinReg(self, title, sweep=None):
+		assert isinstance(title, str), "title needs to be of type str, not {0}".format(type(title))
+
+		if not os.path.exists('results/LinReg/'):
+			os.makedirs('results/LinReg')
+
 		self.regr = linear_model.LinearRegression()
 		self.regr.fit(self.x.reshape(len(self.x), 1), self.y.reshape(len(self.y), 1))
 
@@ -111,15 +117,102 @@ class BuildModel:
 		plt.xlabel('year')
 		plt.legend()
 		try:
-			plt.savefig('results/LinReg-{0}.png'.format(title))
+			plt.savefig('results/LinReg/LinReg-{0}.png'.format(title))
 		except Exception as e:
-			plt.savefig('results/LinReg-{0}.png'.format('Car'))
+			plt.savefig('results/LinReg/LinReg-{0}.png'.format('Car'))
+
+	def QuadReg(self, title, **kwargs):
+		assert isinstance(title, str), "title needs to be of type str, not {0}".format(type(title))
+
+		if not os.path.exists('results/QuadReg/'):
+			os.makedirs('results/QuadReg')
+
+		z = np.polyfit(self.x, self.y, 2)
+		f = np.poly1d(z)
+
+		x_new = np.linspace(self.x[0], self.x[-1], 50)
+		y_new = f(x_new)
+
+		plt.clf()
+		plt.scatter(self.x, self.y, color='black')
+		plt.plot(x_new, y_new, linewidth=3, label=title)
+		plt.xticks()
+		plt.yticks()
+		plt.ylabel('injuries')
+		plt.xlabel('year')
+		plt.legend()
+		try:
+			plt.savefig('results/QuadReg/QuadReg-{0}.png'.format(title))
+		except Exception as e:
+			plt.savefig('results/QuadReg/QuadReg-{0}.png'.format('Car'))
+
+	def PolyReg(self, title, **kwargs):
+		assert isinstance(title, str), "title needs to be of type str, not {0}".format(type(title))
+
+		if not os.path.exists('results/PolyReg/'):
+			os.makedirs('results/PolyReg')
+
+		z = np.polyfit(self.x, self.y, kwargs.pop('deg', 4))
+		f = np.poly1d(z)
+
+		x_new = np.linspace(self.x[0], self.x[-1], 50)
+		y_new = f(x_new)
+
+		plt.clf()
+		plt.scatter(self.x, self.y, color='black')
+		plt.plot(x_new, y_new, linewidth=3, label=title)
+		plt.xticks()
+		plt.yticks()
+		plt.ylabel('injuries')
+		plt.xlabel('year')
+		plt.legend()
+		try:
+			plt.savefig('results/PolyReg/PolyReg-{0}.png'.format(title))
+		except Exception as e:
+			plt.savefig('results/PolyReg/PolyReg-{0}.png'.format('Car'))
+
+	def all(self, title, **kwargs):
+		assert isinstance(title, str), "title needs to be of type str, not {0}".format(type(title))
+
+		if not os.path.exists('results/all/'):
+			os.makedirs('results/all/')
+
+		z = np.polyfit(self.x, self.y, kwargs.pop('deg', 4))
+		f = np.poly1d(z)
+
+		x_poly = np.linspace(self.x[0], self.x[-1], 50)
+		y_poly = f(x_poly)
+
+		z = np.polyfit(self.x, self.y, 2)
+		f = np.poly1d(z)
+
+		x_quad = np.linspace(self.x[0], self.x[-1], 50)
+		y_quad = f(x_quad)	
+
+		self.regr = linear_model.LinearRegression()
+		self.regr.fit(self.x.reshape(len(self.x), 1), self.y.reshape(len(self.y), 1))
+
+
+		plt.clf()
+		plt.scatter(self.x, self.y, color='black')
+		plt.plot(self.x, self.regr.predict(self.x.reshape(len(self.x), 1)), linewidth=3, label='Linear Model')
+		plt.plot(x_quad, y_quad, linewidth=3, label='Quadratic Model')
+		plt.plot(x_poly, y_poly, linewidth=3, label='{0}th degree Polynomial Model'.format(kwargs.pop('deg', 4)))		
+		plt.xticks()
+		plt.yticks()
+		plt.ylabel('injuries')
+		plt.xlabel('year')
+		plt.legend()
+		try:
+			plt.savefig('results/all/AllModels-{0}.png'.format(title))
+		except Exception as e:
+			plt.savefig('results/all/AllModels-{0}.png'.format('Car'))
 
 
 if __name__ == '__main__':
 
 	'''
-	Last update: 2/13/2018 -ic 
+	Last update: 3/1/2018 -ic 
 
 	Testing the functions and classes in this file
 	'''
@@ -131,7 +224,7 @@ if __name__ == '__main__':
 		]
 
 	filter_dict = {
-	'geoname': 'California',
+	'geoname': 'San Diego',
 	'severity': 'Killed',
 	'mode': None,
 	'reportyear': range(2002,2011)
@@ -145,15 +238,12 @@ if __name__ == '__main__':
 	for m in ['All modes', 'Bus', 'Bicyclist', 'Car/Pickup', 'Motorcycle', 'Truck', 'Pedestrian', 'Vehicles']:
 		filter_dict['mode'] = m
 		xs.update({m: xdata.filter_data(xdata.find_rows(filter_dict))})
-		try:
-			xdata.filter_data(xdata.find_rows(filter_dict)).to_csv('{0}.csv'.format(m))
-		except:
-			xdata.filter_data(xdata.find_rows(filter_dict)).to_csv('Car.csv'.format(m))	
 		print('\n')
 
 	for key, data in xs.items():
 		a = BuildModel(data)
 		a.LinReg(key)
+
 
 	
 	
