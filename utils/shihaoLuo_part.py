@@ -21,7 +21,7 @@ class InputData:
         read_columns (type: list) - you can specify which columns you would like to read
         '''
         assert isinstance(fname, str), "fname is not a string: {0}".format(type(fname))
-        assert  (fname in [i for i in glob.glob('data/*.csv')]), "fname is not in data/"
+        #assert  (fname in [i for i in glob.glob('data/*.csv')]), "fname is not in data/"
 
         print 'Reading in {0}...'.format(fname) 
         self.data = pd.read_csv(fname)
@@ -85,11 +85,11 @@ if __name__ == '__main__':
     axs = axs.ravel()
 
     CA_data = InputData()
-    CA_data.load_data('data/road-traffic-injuries-2002-2010.csv',
-                      ['reportyear', 'region_name','mode', 'severity', 'injuries'])
+    CA_data.load_data('D:\Users\lsh\Desktop\ECE180/road-traffic-injuries-2002-2010.csv', 
+                      ['reportyear', 'county_name','mode', 'severity', 'injuries'])
     year = map(str, range(2002, 2011))
     severity1 = ['Severe Injury', 'Killed']
-    explode = [0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.3, 0.3, 0.3, 0.4, 0.7,1.3]
+    explode = [0.0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
     for i in range(len(year)):
         for j in range(len(severity1)):
             filter_dict = {
@@ -98,10 +98,12 @@ if __name__ == '__main__':
             'reportyear': year[i], 
             }
             rows = CA_data.find_rows(filter_dict)
-            new_rows = rows.groupby('region_name').sum()
-            y = new_rows['injuries'].tolist()[1:-1]
-            x_label = new_rows.index.values.tolist()[1:-1]
+            new_rows = rows.groupby('county_name').sum()
+            y = new_rows['injuries'].tolist()
+            x_label = new_rows.index.values.tolist()
             y, x_label = zip(*sorted(zip(y, x_label), reverse=True))
+            y = y[:9]
+            x_label = x_label[:9]
             #axs[2*i+j].bar(x_label[1:-1], y[1:-1],align='center')
             axs[2*i+j].pie(y, startangle=180, autopct='%1.1f%%', pctdistance=0.5, labeldistance=1.2, explode=explode)
             axs[2*i+j].set_title(year[i] + ' ' + severity1[j])
@@ -114,7 +116,7 @@ if __name__ == '__main__':
 
 ###New York###
     NY_data = InputData()
-    NY_data.load_data('data/accidents.csv',
+    NY_data.load_data('D:\Users\lsh\Desktop\ECE180/accidents.csv', 
                       ['BOROUGH', 'NUMBER OF PEDESTRIANS INJURED', 'NUMBER OF PEDESTRIANS KILLED', 
                        'NUMBER OF CYCLIST INJURED', 'NUMBER OF CYCLIST KILLED', 
                        'NUMBER OF MOTORIST INJURED', 'NUMBER OF MOTORIST KILLED'])
@@ -122,9 +124,10 @@ if __name__ == '__main__':
     severity2 = ['INJURED', 'KILLED']
     #y1 = [33326, 78228, 37635, 59276, 9713]#injured
     #y2 = [132, 309, 183, 281, 57]#killed
-    y_hand = [y1, y2]
+    #y_hand = [y1, y2]
     for i in range(len(severity2)):
         rows = NY_data.data.groupby('BOROUGH').sum()
+        #rows = NY_sum.filter(like=severity2[i], axis=0)
         new_rows = rows.filter(like=severity2[i], axis=1)
         x_label = rows.index.tolist()
         y = new_rows.sum(axis=1).tolist()
