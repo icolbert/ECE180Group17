@@ -4,3 +4,4 @@
 
 # The csv files are too big to push to origin on Github
 *.csv
+*.pyc

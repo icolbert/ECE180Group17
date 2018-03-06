@@ -111,16 +111,13 @@ if __name__ == '__main__':
     for i in range(len(cols_x_all)):
         cols_x_all[i] = number_list[i] + cols_x_all[i]
 
-
-
-    
-X=cols_x_all
-Y=cols_y_all     
-fig = plt.figure()  
-plt.ylim(0.65,0.9)
-plt.bar(X,Y,0.5,color=random.choice(color_chioce))  
-plt.xticks(rotation=35)
-plt.xlabel('Vehicle')  
-plt.ylabel('Survival Rate')  
-plt.title('All')  
-plt.show()   
+    X=cols_x_all
+    Y=cols_y_all     
+    fig = plt.figure()  
+    plt.ylim(0.65,0.9)
+    plt.bar(X,Y,0.5,color=random.choice(color_chioce))  
+    plt.xticks(rotation=35)
+    plt.xlabel('Vehicle')  
+    plt.ylabel('Survival Rate')  
+    plt.title('All')  
+    plt.show()   
