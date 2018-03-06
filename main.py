@@ -27,7 +27,32 @@ if __name__ == '__main__':
 		print('\n')
 
 	for key, data in xs.items():
-		a = BuildModel(data)
+		a = BuildModel(data, ylabel=filter_dict['severity'])
+		a.all(key)
+
+
+	### Applying same code to Annual Miles Travelled
+
+	filter_items = [
+		'geoname', 'reportyear', 'region_code'
+		'mode', 'ratio_type', 'ratio', 'county_name'
+		]
+
+	filter_dict = {
+	'geoname': 'California',
+	'mode': None,
+	'reportyear': range(2002,2011)
+	}
+	miles_data = InputData()
+	miles_data.load_data('data/annual-miles-traveled-2002-2010.csv')
+	xs = {}
+	for m in ['Bicyclist', 'Pedestrian', 'Vehicle']:
+		filter_dict['mode'] = m
+		xs.update({m: xdata.filter_data(xdata.find_rows(filter_dict))})
+		print('\n')
+
+	for key, data in xs.items():
+		a = BuildModel(data, ylabel='Miles Traveled per Square Mile')
 		#a.LinReg(key)
 		#a.QuadReg(key)
 		a.all(key)

@@ -81,7 +81,7 @@ class BuildModel:
 	'''
 	Build a model based on the 
 	'''
-	def __init__(self, data, xdim='reportyear', ydim='injuries'):
+	def __init__(self, data, xdim='reportyear', ydim='injuries', **kwargs):
 		'''
 		:data: DataFrame - all of the data
 		:model: string - type of regression model to use
@@ -93,6 +93,7 @@ class BuildModel:
 		self.data = data.dropna(axis=0, how='any')
 		self.y = self.data[ydim].values
 		self.x = self.data[xdim].values.astype('int64')
+		self.ylabel = kwargs.pop('ylabel', 'Killed')
 
 
 		if not os.path.exists('results/'):
@@ -113,7 +114,7 @@ class BuildModel:
 		plt.plot(self.x, self.regr.predict(self.x.reshape(len(self.x), 1)), linewidth=3, label=title)
 		plt.xticks()
 		plt.yticks()
-		plt.ylabel('injuries')
+		plt.ylabel(self.ylabel)
 		plt.xlabel('year')
 		plt.legend()
 		try:
@@ -138,7 +139,7 @@ class BuildModel:
 		plt.plot(x_new, y_new, linewidth=3, label=title)
 		plt.xticks()
 		plt.yticks()
-		plt.ylabel('injuries')
+		plt.ylabel(self.ylabel)
 		plt.xlabel('year')
 		plt.legend()
 		try:
@@ -163,7 +164,7 @@ class BuildModel:
 		plt.plot(x_new, y_new, linewidth=3, label=title)
 		plt.xticks()
 		plt.yticks()
-		plt.ylabel('injuries')
+		plt.ylabel(self.ylabel)
 		plt.xlabel('year')
 		plt.legend()
 		try:
@@ -200,7 +201,7 @@ class BuildModel:
 		plt.plot(x_poly, y_poly, linewidth=3, label='{0}th degree Polynomial Model'.format(kwargs.pop('deg', 4)))		
 		plt.xticks()
 		plt.yticks()
-		plt.ylabel('injuries')
+		plt.ylabel(self.ylabel)
 		plt.xlabel('year')
 		plt.legend()
 		try:
@@ -241,7 +242,7 @@ if __name__ == '__main__':
 		print('\n')
 
 	for key, data in xs.items():
-		a = BuildModel(data)
+		a = BuildModel(data, ylabel=filter_dict['severity'])
 		a.LinReg(key)
 
 
