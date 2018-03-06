@@ -50,9 +50,10 @@ def calculate_all(sheet_name):
     return y
 
 
-if __name__ == '__main__':
 
-    workbook = xlrd.open_workbook('/Users/apple/Desktop/bicyclist SR.xlsx')
+def main():
+    print 'Running qianfengGuo_part.py'
+    workbook = xlrd.open_workbook('data/bicyclist SR.xlsx')
     sheet_name_list = workbook.sheet_names()
     cols_x = []
     cols_y = []
@@ -121,3 +122,6 @@ if __name__ == '__main__':
     plt.ylabel('Survival Rate')  
     plt.title('All')  
     plt.show()   
+
+if __name__ == '__main__':
+    main()

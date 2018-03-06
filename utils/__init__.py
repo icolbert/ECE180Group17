@@ -1,5 +1,5 @@
 from .ian import *
-from .Tianxiang_work import *
-from .LogMode import *
-from .qianfengGuo_part import *
-from .shihaoLuo_part import *
+import Tianxiang_work 
+import LogMode
+import qianfengGuo_part 
+import shihaoLuo_part 

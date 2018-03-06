@@ -1,8 +1,27 @@
 import os
+import argparse
 
 from utils import *
 
+def run_all_filter(x):
+	if x.lower() in ['true', 't', 'yes', 'y']:
+		return True
+	elif x.lower() in ['false', 'f', 'no', 'n']:
+		return False
+	else:
+		raise NameError('[Yes/No] or [True/False]')
+
 if __name__ == '__main__':
+	parser = argparse.ArgumentParser()
+
+	parser.add_argument('-run_all',
+		type=run_all_filter,
+		default=False,
+		help='Boolean flag. Run all? [True/False]'
+	)
+
+	args = parser.parse_args()
+
 	filter_items = [
 		'geoname', 'reportyear', 
 		'mode', 'severity', 'injuries', 'totalpop',
@@ -58,3 +77,9 @@ if __name__ == '__main__':
 		#a.LinReg(key)
 		#a.QuadReg(key)
 		a.all(key)
+	
+	if args.run_all:
+		Tianxiang_work.main()
+		LogMode.main()
+		qianfengGuo_part.main()
+		shihaoLuo_part.main()

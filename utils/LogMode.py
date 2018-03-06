@@ -6,13 +6,14 @@ import os
 from ian import InputData
     
 
-if __name__ == '__main__':
+def main():
+    print('Running LogMode.py...')
     fig, axs = plt.subplots(9,2, figsize=(15, 30))
     fig.subplots_adjust(hspace = 0.5, wspace=0.0)
     axs = axs.ravel()
 
     CA_data = InputData()
-    CA_data.load_data('../data/road-traffic-injuries-2002-2010.csv', 
+    CA_data.load_data('data/road-traffic-injuries-2002-2010.csv', 
                       ['reportyear', 'geoname', 'mode', 'severity', 'injuries'])
     year = map(str, range(2002, 2011))
     severity1 = ['Severe Injury', 'Killed']
@@ -39,7 +40,7 @@ if __name__ == '__main__':
     axs1 = axs1.ravel()
 
     NY_data = InputData()
-    NY_data.load_data('../data/accidents.csv', 
+    NY_data.load_data('data/accidents.csv', 
                       ['NUMBER OF PEDESTRIANS INJURED', 'NUMBER OF PEDESTRIANS KILLED', 
                        'NUMBER OF CYCLIST INJURED', 'NUMBER OF CYCLIST KILLED', 
                        'NUMBER OF MOTORIST INJURED', 'NUMBER OF MOTORIST KILLED'])
@@ -55,5 +56,8 @@ if __name__ == '__main__':
         axs1[i].axis('equal')
         axs1[i].legend(labels=x_label, fontsize=10, bbox_to_anchor=(0.7, 0.75)) 
 
-    fig.savefig('../results/mode/CA.png')
-    fig1.savefig('../results/mode/NY.png')
+    fig.savefig('results/mode/CA.png')
+    fig1.savefig('results/mode/NY.png')
+
+if __name__ == '__main__':
+    main()

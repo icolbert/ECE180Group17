@@ -6,10 +6,11 @@ import glob
 import os
 from ian import InputData
 
-if __name__ == '__main__':
-    
+
+def main():    
+    print 'Running Tianxiang_work.py...'
     CA_data = InputData()
-    CA_data.load_data('../data/road-traffic-injuries-2002-2010.csv',
+    CA_data.load_data('data/road-traffic-injuries-2002-2010.csv',
                       ['reportyear', 'severity','injuries'])
     
 
@@ -42,7 +43,7 @@ if __name__ == '__main__':
 ################################## NY  
     #severity2 = ['Injured', 'Killed']
     NY_data = InputData()
-    NY_data.load_data('../data/accidents.csv',[ 'NUMBER OF PERSONS INJURED', 'NUMBER OF PERSONS KILLED', 
+    NY_data.load_data('data/accidents.csv',[ 'NUMBER OF PERSONS INJURED', 'NUMBER OF PERSONS KILLED', 
                        'DATE'])
             
     da = NY_data.data
@@ -81,7 +82,7 @@ if __name__ == '__main__':
         plt.legend(labels = severity2, loc = 2)
         y.clear()
     #gra1.savefig('./NY4.png')
-    plt.savefig('./NY1.png')
+    plt.savefig('results/tianxiang-NY1.png')
     plt.close()
     
     plt.figure(figsize=(12,10))
@@ -95,6 +96,9 @@ if __name__ == '__main__':
     plt.title('Number of Killed vs. Years in NYC',fontsize=18,fontweight="bold")
     plt.legend(labels = severity2, loc = 1)
  
-    plt.savefig('./NY2.png')
-    #gra2.savefig('./NY5.png')
+    plt.savefig('results/tianxiang-NY2.png')
+    #gra2.savefig('results/NY5.png')
     plt.close()
+
+if __name__ == '__main__':
+    main()

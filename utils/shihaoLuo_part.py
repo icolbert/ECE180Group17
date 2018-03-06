@@ -17,13 +17,14 @@ class InputData_v2(InputData):
         return self.data.sum()
     
 
-if __name__ == '__main__':
+def main():
+    print 'Running shihaoLuo_part.py...'
     fig, axs = plt.subplots(9,2, figsize=(15, 30))
     fig.subplots_adjust(hspace = 0.5, wspace=0.0)
     axs = axs.ravel()
 
     CA_data = InputData_v2()
-    CA_data.load_data('D:\Users\lsh\Desktop\ECE180/road-traffic-injuries-2002-2010.csv', 
+    CA_data.load_data('data/road-traffic-injuries-2002-2010.csv', 
                       ['reportyear', 'county_name','mode', 'severity', 'injuries'])
     year = map(str, range(2002, 2011))
     severity1 = ['Severe Injury', 'Killed']
@@ -54,7 +55,7 @@ if __name__ == '__main__':
 
 ###New York###
     NY_data = InputData_v2()
-    NY_data.load_data('D:\Users\lsh\Desktop\ECE180/accidents.csv', 
+    NY_data.load_data('data/accidents.csv', 
                       ['BOROUGH', 'NUMBER OF PEDESTRIANS INJURED', 'NUMBER OF PEDESTRIANS KILLED', 
                        'NUMBER OF CYCLIST INJURED', 'NUMBER OF CYCLIST KILLED', 
                        'NUMBER OF MOTORIST INJURED', 'NUMBER OF MOTORIST KILLED'])
@@ -76,5 +77,8 @@ if __name__ == '__main__':
         axs1[i].legend(labels=x_label, fontsize=10, bbox_to_anchor=(0.7, 0.75)) 
 
     
-    fig.savefig('./CA.png')
-    fig1.savefig('./NY.png')
+    fig.savefig('results/shihao-CA.png')
+    fig1.savefig('results/shihao-NY.png')
+
+if __name__ == '__main__':
+    main()
