@@ -1,9 +1,11 @@
 import os
 import argparse
+import scipy
+import sklearn as sk
 
 from utils import *
 
-def run_all_filter(x):
+def bool_filter(x):
 	if x.lower() in ['true', 't', 'yes', 'y']:
 		return True
 	elif x.lower() in ['false', 'f', 'no', 'n']:
@@ -15,10 +17,16 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument('-run_all',
-		type=run_all_filter,
+		type=bool_filter,
 		default=False,
 		help='Boolean flag. Run all? [True/False]'
 	)
+	parser.add_argument('-verbose',
+		type=bool_filter,
+		default=True,
+		help='Boolean flag. Print statements? [True/False]'
+	)
+
 
 	args = parser.parse_args()
 
@@ -29,7 +37,7 @@ if __name__ == '__main__':
 		]
 
 	filter_dict = {
-	'geoname': 'San Diego',
+	'geoname': 'California',
 	'severity': 'Severe Injury',
 	'mode': None,
 	'reportyear': range(2002,2011)
@@ -45,9 +53,12 @@ if __name__ == '__main__':
 		xs.update({m: xdata.filter_data(xdata.find_rows(filter_dict))})
 		print('\n')
 
+	traffic_models = {}
 	for key, data in xs.items():
+		print key
 		a = BuildModel(data, ylabel=filter_dict['severity'])
 		a.all(key)
+		traffic_models.update({key:a})
 
 
 	### Applying same code to Annual Miles Travelled
@@ -65,19 +76,42 @@ if __name__ == '__main__':
 	}
 	miles_data = InputData()
 	miles_data.load_data('data/annual-miles-traveled-2002-2010.csv', read_columns=filter_items)
-	xs = {}
+	ms = {}
 	for m in ['Bicyclist', 'Pedestrian', 'Vehicle']:
 		filter_dict['mode'] = m
-		xs.update({m: miles_data.filter_data(miles_data.find_rows(filter_dict))})
+		ms.update({m: miles_data.filter_data(miles_data.find_rows(filter_dict))})
 		print('\n')
 
-	for key, data in xs.items():
+	miles_models = {}
+	for key, data in ms.items():
+		print key
 		data.to_csv('test.csv')
 		a = BuildModel(data,ydim='ratio', ylabel='Miles Traveled per Square Mile')
-		#a.LinReg(key)
-		#a.QuadReg(key)
 		a.all(key)
+		miles_models.update({key: a})
 	
+	if args.verbose:
+		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Bicyclist'].y_lin, miles_models['Bicyclist'].y_lin)
+		print '\nBikers\nLinReg :: R-squard: {0:.2f}, P-Value: {1:.2f}'.format(r, p)
+		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Bicyclist'].y_quad, miles_models['Bicyclist'].y_quad)
+		print 'QuadReg :: R-squard: {0:.2f}, P-Value: {1:.2f}'.format(r, p)
+		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Bicyclist'].y_poly, miles_models['Bicyclist'].y_poly)
+		print 'Poly-4 :: R-squard: {0:.2f}, P-Value: {1:.2f}\n'.format(r, p)
+
+		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Pedestrian'].y_lin, miles_models['Pedestrian'].y_lin)
+		print 'Pedestrians\nLinReg :: R-squard: {0:.2f}, P-Value: {1:.2f}'.format(r, p)
+		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Pedestrian'].y_quad, miles_models['Pedestrian'].y_quad)
+		print 'QuadReg :: R-squard: {0:.2f}, P-Value: {1:.2f}'.format(r, p)
+		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Pedestrian'].y_poly, miles_models['Pedestrian'].y_poly)
+		print 'Poly-4 :: R-squard: {0:.2f}, P-Value: {1:.2f}\n'.format(r, p)
+
+		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Vehicles'].y_lin, miles_models['Vehicle'].y_lin)
+		print 'Vehicles\nLinReg :: R-squard: {0:.2f}, P-Value: {1:.2f}'.format(r, p)
+		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Vehicles'].y_quad, miles_models['Vehicle'].y_quad)
+		print 'QuadReg :: R-squard: {0:.2f}, P-Value: {1:.2f}'.format(r, p)
+		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Vehicles'].y_poly, miles_models['Vehicle'].y_poly)
+		print 'Poly-4 :: R-squard: {0:.2f}, P-Value: {1:.2f}\n'.format(r, p)
+
 	if args.run_all:
 		Tianxiang_work.main()
 		LogMode.main()

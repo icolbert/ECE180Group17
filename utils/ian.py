@@ -108,6 +108,7 @@ class BuildModel:
 
 		self.regr = linear_model.LinearRegression()
 		self.regr.fit(self.x.reshape(len(self.x), 1), self.y.reshape(len(self.y), 1))
+		self.y_lin = self.regr.predict(self.x.reshape(len(self.x), 1))
 
 		plt.clf()
 		plt.scatter(self.x, self.y, color='black')
@@ -132,11 +133,11 @@ class BuildModel:
 		f = np.poly1d(z)
 
 		x_new = np.linspace(self.x[0], self.x[-1], 50)
-		y_new = f(x_new)
+		self.y_quad = f(x_new)
 
 		plt.clf()
 		plt.scatter(self.x, self.y, color='black')
-		plt.plot(x_new, y_new, linewidth=3, label=title)
+		plt.plot(x_new, self.y_quad, linewidth=3, label=title)
 		plt.xticks()
 		plt.yticks()
 		plt.ylabel(self.ylabel)
@@ -157,11 +158,11 @@ class BuildModel:
 		f = np.poly1d(z)
 
 		x_new = np.linspace(self.x[0], self.x[-1], 50)
-		y_new = f(x_new)
+		self.y_poly = f(x_new)
 
 		plt.clf()
 		plt.scatter(self.x, self.y, color='black')
-		plt.plot(x_new, y_new, linewidth=3, label=title)
+		plt.plot(x_new, self.y_poly, linewidth=3, label=title)
 		plt.xticks()
 		plt.yticks()
 		plt.ylabel(self.ylabel)
@@ -175,6 +176,7 @@ class BuildModel:
 	def all(self, title, **kwargs):
 		assert isinstance(title, str), "title needs to be of type str, not {0}".format(type(title))
 
+		predict_year = kwargs.pop('predict', 2018)
 		if not os.path.exists('results/all/'):
 			os.makedirs('results/all/')
 
@@ -182,23 +184,26 @@ class BuildModel:
 		f = np.poly1d(z)
 
 		x_poly = np.linspace(self.x[0], self.x[-1], 50)
-		y_poly = f(x_poly)
+		self.y_poly = f(x_poly)
+		print 'Poly-4 2018 Prediction: {0}'.format(f(predict_year))		
 
 		z = np.polyfit(self.x, self.y, 2)
 		f = np.poly1d(z)
 
 		x_quad = np.linspace(self.x[0], self.x[-1], 50)
-		y_quad = f(x_quad)	
+		self.y_quad = f(x_quad)
+		print 'QuadReg 2018 Prediction: {0}'.format(f(predict_year))	
 
 		self.regr = linear_model.LinearRegression()
 		self.regr.fit(self.x.reshape(len(self.x), 1), self.y.reshape(len(self.y), 1))
-
+		self.y_lin = self.regr.predict(self.x.reshape(len(self.x), 1))
+		print 'LinReg 2018 Prediction: {0}'.format(self.regr.predict(predict_year))
 
 		plt.clf()
 		plt.scatter(self.x, self.y, color='black')
 		plt.plot(self.x, self.regr.predict(self.x.reshape(len(self.x), 1)), linewidth=3, label='Linear Model')
-		plt.plot(x_quad, y_quad, linewidth=3, label='Quadratic Model')
-		plt.plot(x_poly, y_poly, linewidth=3, label='{0}th degree Polynomial Model'.format(kwargs.pop('deg', 4)))		
+		plt.plot(x_quad, self.y_quad, linewidth=3, label='Quadratic Model')
+		plt.plot(x_poly, self.y_poly, linewidth=3, label='{0}th degree Polynomial Model'.format(kwargs.pop('deg', 4)))		
 		plt.xticks()
 		plt.yticks()
 		plt.ylabel(self.ylabel)
