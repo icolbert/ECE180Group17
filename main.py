@@ -112,8 +112,8 @@ if __name__ == '__main__':
 		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Vehicles'].y_poly, miles_models['Vehicle'].y_poly)
 		print 'Poly-4 :: R-squard: {0:.2f}, P-Value: {1:.2f}\n'.format(r, p)
 
-	if args.run_all:
-		#Tianxiang_work.main()
-		LogMode.main()
+	'''if args.run_all:
 		qianfengGuo_part.main()
 		shihaoLuo_part.main()
+		Tianxiang_work.main()
+		LogMode.main()'''
