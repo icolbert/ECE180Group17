@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import glob
 import os
+import zipfile
 
 class InputData:
 	'''
@@ -26,7 +27,14 @@ class InputData:
 		#assert  (fname in [i for i in glob.glob('data\*.csv')]), "fname is not in data/"
 
 		print('Reading in {0}...'.format(fname))
-		self.data = pd.read_csv(fname)
+		try:
+			self.data = pd.read_csv(fname)
+		except Exception as e:
+			zip_ref = zipfile.ZipFile('{0}.zip'.format(fname), 'r')
+			zip_ref.extractall('data/')
+			zip_ref.close()
+			self.data = pd.read_csv(fname)
+
 		try:
 			if read_columns:
 				self.data = self.data.filter(items=read_columns, axis=1)

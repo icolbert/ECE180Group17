@@ -51,7 +51,7 @@ if __name__ == '__main__':
 	for m in ['All modes', 'Bus', 'Bicyclist', 'Car/Pickup', 'Motorcycle', 'Truck', 'Pedestrian', 'Vehicles']:
 		filter_dict['mode'] = m
 		xs.update({m: xdata.filter_data(xdata.find_rows(filter_dict))})
-		print('\n')
+		if args.verbose: print('\n')
 
 	traffic_models = {}
 	for key, data in xs.items():
@@ -59,10 +59,10 @@ if __name__ == '__main__':
 		a = BuildModel(data, ylabel=filter_dict['severity'])
 		a.all(key)
 		traffic_models.update({key:a})
+		print('\n')
 
 
 	### Applying same code to Annual Miles Travelled
-	
 	filter_items = [
 		'geoname', 'reportyear', 'region_code', 'groupquarters',
 		'mode', 'ratio_type', 'ratio', 'county_name'
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 	for m in ['Bicyclist', 'Pedestrian', 'Vehicle']:
 		filter_dict['mode'] = m
 		ms.update({m: miles_data.filter_data(miles_data.find_rows(filter_dict))})
-		print('\n')
+		if args.verbose: print('\n')
 
 	miles_models = {}
 	for key, data in ms.items():
@@ -89,6 +89,7 @@ if __name__ == '__main__':
 		a = BuildModel(data,ydim='ratio', ylabel='Miles Traveled per Square Mile')
 		a.all(key)
 		miles_models.update({key: a})
+		print '\n'
 	
 	if args.verbose:
 		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Bicyclist'].y_lin, miles_models['Bicyclist'].y_lin)
