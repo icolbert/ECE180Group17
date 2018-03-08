@@ -53,7 +53,7 @@ def calculate_all(sheet_name):
 
 def main():
     print 'Running qianfengGuo_part.py'
-    workbook = xlrd.open_workbook('data/bicyclist SR.xlsx')
+    workbook = xlrd.open_workbook('data/accident_survival-rate.xlsx')
     sheet_name_list = workbook.sheet_names()
     cols_x = []
     cols_y = []

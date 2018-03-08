@@ -113,7 +113,7 @@ if __name__ == '__main__':
 		print 'Poly-4 :: R-squard: {0:.2f}, P-Value: {1:.2f}\n'.format(r, p)
 
 	if args.run_all:
-		Tianxiang_work.main()
+		#Tianxiang_work.main()
 		LogMode.main()
 		qianfengGuo_part.main()
 		shihaoLuo_part.main()
