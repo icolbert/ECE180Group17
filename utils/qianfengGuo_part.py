@@ -5,7 +5,10 @@ import xlrd
 import random
 import pandas as pd
 
-def plot_picture(cols_x,cols_y,xlabel,ylabel,title):
+color_chioce = ['green','red','blue','yellow','orange','purple','brown']
+workbook = xlrd.open_workbook('data/accident_survival-rate.xlsx')
+
+def plot_picture(cols_x,cols_y,xlabel,ylabel,title,i=0):
     assert isinstance(cols_x,list)
     assert isinstance(cols_y,list)
     X=cols_x[i]
@@ -53,7 +56,6 @@ def calculate_all(sheet_name):
 
 def main():
     print 'Running qianfengGuo_part.py'
-    workbook = xlrd.open_workbook('data/accident_survival-rate.xlsx')
     sheet_name_list = workbook.sheet_names()
     cols_x = []
     cols_y = []
@@ -64,7 +66,7 @@ def main():
         cols_y.append(current_sheet.col_values(4)[1:])    
 
     for i in range(len(sheet_name_list)):
-        plot_picture(cols_x,cols_y,'Year','Survival Rate',sheet_name_list[i])
+        plot_picture(cols_x,cols_y,'Year','Survival Rate',sheet_name_list[i],i)
         
         #No-vehicle
         sheet_name_no_vehicle = []

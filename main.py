@@ -23,7 +23,7 @@ if __name__ == '__main__':
 	)
 	parser.add_argument('-verbose',
 		type=bool_filter,
-		default=True,
+		default=False,
 		help='Boolean flag. Print statements? [True/False]'
 	)
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
 	'reportyear': range(2002,2011)
 	}
 
-	xdata = InputData()
+	xdata = InputData(verbose=args.verbose)
 	xdata.load_data('data/road-traffic-injuries-2002-2010.csv')
 
 	# Bus, All modes, Bicyclist
@@ -112,8 +112,8 @@ if __name__ == '__main__':
 		slope, inter, r, p, std = scipy.stats.mstats.linregress(traffic_models['Vehicles'].y_poly, miles_models['Vehicle'].y_poly)
 		print 'Poly-4 :: R-squard: {0:.2f}, P-Value: {1:.2f}\n'.format(r, p)
 
-	'''if args.run_all:
-		qianfengGuo_part.main()
+	if args.run_all:
 		shihaoLuo_part.main()
 		Tianxiang_work.main()
-		LogMode.main()'''
+		LogMode.main()
+		qianfengGuo_part.main()

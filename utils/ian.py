@@ -10,11 +10,12 @@ class InputData:
 	This class is a good way to input all of the data. 
 	It has a load_data() and find_rows() method that filter through the raw data.
 	'''
-	def __init__(self):
+	def __init__(self, verbose=False):
 		self.read_columns = [
 			'geoname', 'reportyear', 'mode', 'severity', 'injuries', 'totalpop','poprate', 'LL95CI_poprate', 'UL95CI_poprate', 'poprate_se', 'poprate_rse',
 			'avmttotal', 'avmtrate', 'LL95CI_avmtrate', 'UL95CI_avmtrate', 'avmtrate_se','avmtrate_rse'
 			]
+		self.verbose = verbose
 
 	def load_data(self, fname, read_columns=None):
 		'''
@@ -42,7 +43,7 @@ class InputData:
 		else:
 			assert isinstance(x, type(pd.DataFrame())), "x needs to be a pandas DataFrame, it is a {0}".format(type(x))
 
-			print('Filtering bad features from data...')
+			if self.verbose: print('Filtering bad features from data...')
 			N = x.sum()
 			bad_columns = list(set(N[N == 0].index).union(set(set(list(x)) - set(N.index))))
 			x = x.drop(bad_columns, axis=1)
@@ -60,7 +61,7 @@ class InputData:
 		
 		x = self.data
 		for key, value in filter_dict.items():
-			print('Filtering {0}...'.format(key))
+			if self.verbose: print('Filtering {0}...'.format(key))
 			if isinstance(value, list):
 				y = pd.DataFrame(data=[])
 				for v in value:
