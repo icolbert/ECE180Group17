@@ -18,5 +18,7 @@ Severe injuries and deaths resulting from various modes of transportation in Cal
 
 #### Resources
 [1] Road Traffic Injuries, 2002-2010. https://www.healthdata.gov/dataset/road-traffic-injuries
+
 [2] Annual Miles Traveled, 2002-2010. https://www.healthdata.gov/dataset/annual-miles-traveled-2002-2010
+
 [3] NYC Open Data: accidents. https://data.cityofnewyork.us/Public-Safety/accidents/yjf6-ewhz/data
